@@ -7,11 +7,13 @@ import org.devices.specifications.api.model.Model;
 import java.util.Set;
 
 public interface ConsumerService {
+
     Set<Brand> getAllBrands(boolean useCache);
     Brand getBrandByName(String brandName, boolean useCache);
-    Set<Model> getAllModelsByBrandName(String brandName);
-    Set<Model> getAllModelsByBrandUrl(String brandUrl, boolean useCache);
-    Model getModelByName(String brandUrl, String modelName, boolean useCache);
-    Specifications getSpecificationsByUrl(String url, boolean useCache);
-    Specifications getSpecificationsByBrandModel(String brandName, String modelName);
+
+    Set<Model> getAllModelsByBrand(Brand brand, boolean useCache);
+    Set<Model> getAllModelsByBrandName(String brandName, boolean useCache);
+
+    Specifications getSpecificationsByModel(Model model, boolean useCache);
+    Specifications getSpecificationsByBrandModel(String brandName, String modelName, boolean useCache);
 }

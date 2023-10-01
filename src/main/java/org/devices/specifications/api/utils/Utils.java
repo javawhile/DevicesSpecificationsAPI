@@ -4,10 +4,10 @@ import org.devices.specifications.api.model.Brand;
 import org.devices.specifications.api.model.Model;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class Utils {
@@ -95,6 +95,17 @@ public class Utils {
 
             return false;
         };
+    }
+
+    public <T> Set<String> getReadableValuesFromSet(Set<T> set, Function<T, String> conversionFunction) {
+        Set<String> readableValues = new HashSet<>();
+        if(set != null && conversionFunction != null) {
+            readableValues.addAll(set.stream()
+                    .filter(Objects::nonNull)
+                    .map(conversionFunction)
+                    .collect(Collectors.toList()));
+        }
+        return readableValues;
     }
 
 }
