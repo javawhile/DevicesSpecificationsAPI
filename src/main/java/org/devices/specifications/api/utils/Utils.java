@@ -26,7 +26,7 @@ public class Utils {
         if(stringArray != null && stringArray.length >= 1) {
             for (String line: stringArray) {
                 if(line != null && !line.trim().isEmpty()) {
-                    list.add(line);
+                    list.add(line.trim());
                 }
             }
         }

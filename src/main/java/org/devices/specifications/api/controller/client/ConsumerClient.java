@@ -1,5 +1,6 @@
 package org.devices.specifications.api.controller.client;
 
+import org.devices.specifications.api.model.Property;
 import org.devices.specifications.api.model.Specifications;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,9 @@ public interface ConsumerClient {
     @GetMapping("/models/{brandName}")
     ResponseEntity<Set<String>> getAllModelsByBrandName(@PathVariable("brandName") String brandName);
 
+    @GetMapping("/specifications/detail/{brandName}/{modelName}")
+    ResponseEntity<Set<Property>> getDetailSpecificationsByBrandModel(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
+
     @GetMapping("/specifications/{brandName}/{modelName}")
     ResponseEntity<Specifications> getSpecificationsByBrandModel(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
 
@@ -28,4 +32,7 @@ public interface ConsumerClient {
 
     @GetMapping("/specifications/{brandName}/{modelName}/nocache")
     ResponseEntity<Specifications> getSpecificationsByBrandModelNoCache(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
+
+    @GetMapping("/specifications/detail/{brandName}/{modelName}/nocache")
+    ResponseEntity<Set<Property>> getDetailSpecificationsByBrandModelNoCache(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
 }

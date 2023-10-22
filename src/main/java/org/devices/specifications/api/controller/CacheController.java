@@ -33,6 +33,11 @@ public class CacheController implements CacheClient {
         return getResponseEntity(String.format("%d items cleared", cacheService.resetSpecificationsCache()));
     }
 
+    @Override
+    public ResponseEntity<String> clearDetailSpecificationsCache() {
+        return getResponseEntity(String.format("%d items cleared", cacheService.resetDetailSpecificationsCache()));
+    }
+
     private <T> ResponseEntity<T> getResponseEntity(T data) {
         return new ResponseEntity<T>(data, HttpStatus.OK);
 

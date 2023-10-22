@@ -18,4 +18,7 @@ public interface CacheClient {
 
     @GetMapping("/cache/clear/specifications")
     ResponseEntity<String> clearSpecificationsCache();
+
+    @GetMapping("/cache/clear/detailSpecifications")
+    ResponseEntity<String> clearDetailSpecificationsCache();
 }

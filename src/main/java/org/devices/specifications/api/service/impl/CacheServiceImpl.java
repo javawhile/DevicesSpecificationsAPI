@@ -1,8 +1,8 @@
 package org.devices.specifications.api.service.impl;
 
-import io.swagger.models.auth.In;
 import org.devices.specifications.api.model.Brand;
 import org.devices.specifications.api.model.Model;
+import org.devices.specifications.api.model.Property;
 import org.devices.specifications.api.model.Specifications;
 import org.devices.specifications.api.service.CacheService;
 import org.devices.specifications.api.utils.Utils;
@@ -29,6 +29,10 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     @Qualifier("specificationsCache")
     private Map<String, Specifications> specificationsCache;
+
+    @Autowired
+    @Qualifier("detailSpecificationsCache")
+    private Map<String, Set<Property>> detailSpecificationsCache;
 
     @Override
     public Integer resetAllCache() {
@@ -57,6 +61,13 @@ public class CacheServiceImpl implements CacheService {
     public Integer resetSpecificationsCache() {
         Integer size = specificationsCache.size();
         specificationsCache.clear();
+        return size;
+    }
+
+    @Override
+    public Integer resetDetailSpecificationsCache() {
+        Integer size = detailSpecificationsCache.size();
+        detailSpecificationsCache.clear();
         return size;
     }
 
@@ -99,6 +110,13 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public void saveDetailSpecifications(String modelUrl, Set<Property> properties) {
+        if(isValidString(modelUrl) && properties != null) {
+            detailSpecificationsCache.put(modelUrl, properties);
+        }
+    }
+
+    @Override
     public Brand getBrand(String brandName) {
         if(isValidString(brandName) && brandsCache.containsKey(brandName)) {
             return utils.searchBrand(getAllBrands(), brandName);
@@ -127,6 +145,14 @@ public class CacheServiceImpl implements CacheService {
     public Specifications getSpecification(String modelUrl) {
         if(isValidString(modelUrl)) {
             return specificationsCache.get(modelUrl);
+        }
+        return null;
+    }
+
+    @Override
+    public Set<Property> getDetailSpecification(String modelUrl) {
+        if(isValidString(modelUrl)) {
+            return detailSpecificationsCache.get(modelUrl);
         }
         return null;
     }

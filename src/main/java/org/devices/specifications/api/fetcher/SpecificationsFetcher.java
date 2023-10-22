@@ -1,5 +1,6 @@
 package org.devices.specifications.api.fetcher;
 
+import org.devices.specifications.api.fetcher.constants.Constants;
 import org.devices.specifications.api.model.Specifications;
 import org.devices.specifications.api.model.ConnectionConfig;
 
@@ -14,20 +15,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class SpecificationsFetcher {
+public class SpecificationsFetcher implements Constants {
 
 	@Autowired
 	private Utils utils;
-
-	//CONSTANTS
-	private static final String BRIEF_SPECIFICATIONS_BLOCK = "model-brief-specifications";
-	private static final String TAG_BR = "<br>";
-	private static final String TAG_B_START = "<b>";
-	private static final String TAG_B_END = "</b>:";
-	private static final String SPACE_LINES = "\r\n";
-	private static final String SPACE = " ";
-	private static final String COMMA = ",";
-	private static final String HYPHEN = "-";
 
 	private static final Logger logger = LoggerFactory.getLogger(SpecificationsFetcher.class);
 
@@ -61,7 +52,7 @@ public class SpecificationsFetcher {
 		}
 
 		List<String> specificationPerString = utils.preprocessStringArray(briefSpecificationsBlockHtml.split(TAG_BR));
-		if(specificationPerString.size() >= 1) {
+		if(!specificationPerString.isEmpty()) {
 			specificationPerString.remove(specificationPerString.size() - 1);
 		}
 

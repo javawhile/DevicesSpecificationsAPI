@@ -1,5 +1,6 @@
 package org.devices.specifications.api.fetcher;
 
+import org.devices.specifications.api.fetcher.constants.Constants;
 import org.devices.specifications.api.model.ConnectionConfig;
 import org.devices.specifications.api.model.Model;
 import org.jsoup.nodes.Attributes;
@@ -13,14 +14,9 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class ModelFetcher {
+public class ModelFetcher implements Constants {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelFetcher.class);
-
-    //CONSTANTS
-    private static final String MODEL_LIST_BLOCK = "model-listing-container-80";
-    private static final String A = "a";
-    private static final String HREF = "href";
 
     public Set<Model> getAllModels(final String url, final ConnectionConfig connectionConfig) {
         logger.debug("getAllModels: started for url={}", url);

@@ -3,6 +3,7 @@ package org.devices.specifications.api.controller;
 import org.devices.specifications.api.controller.client.ConsumerClient;
 import org.devices.specifications.api.model.Brand;
 import org.devices.specifications.api.model.Model;
+import org.devices.specifications.api.model.Property;
 import org.devices.specifications.api.model.Specifications;
 import org.devices.specifications.api.service.ConsumerService;
 import org.devices.specifications.api.utils.Utils;
@@ -64,6 +65,12 @@ public class ConsumerController implements ConsumerClient {
     }
 
     @Override
+    public ResponseEntity<Set<Property>> getDetailSpecificationsByBrandModel(String brandName, String modelName) {
+        Set<Property> properties = consumerService.getDetailSpecificationsByBrandModel(brandName, modelName, useCache);
+        return getResponseEntity(properties);
+    }
+
+    @Override
     public ResponseEntity<Set<String>> getAllModelsByBrandNameNoCache(String brandName) {
         Set<Model> allModels = consumerService.getAllModelsByBrandName(brandName, false);
         Set<String> allReadableFormat = new HashSet<>();
@@ -87,9 +94,14 @@ public class ConsumerController implements ConsumerClient {
         return getResponseEntity(specifications);
     }
 
+    @Override
+    public ResponseEntity<Set<Property>> getDetailSpecificationsByBrandModelNoCache(String brandName, String modelName) {
+        Set<Property> properties = consumerService.getDetailSpecificationsByBrandModel(brandName, modelName, false);
+        return getResponseEntity(properties);
+    }
+
     private <T> ResponseEntity<T> getResponseEntity(T data) {
         return new ResponseEntity<T>(data, HttpStatus.OK);
-
     }
 
 }

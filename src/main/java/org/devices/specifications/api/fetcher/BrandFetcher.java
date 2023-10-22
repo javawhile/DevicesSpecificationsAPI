@@ -1,5 +1,6 @@
 package org.devices.specifications.api.fetcher;
 
+import org.devices.specifications.api.fetcher.constants.Constants;
 import org.devices.specifications.api.model.Brand;
 import org.devices.specifications.api.model.ConnectionConfig;
 import org.jsoup.nodes.Attributes;
@@ -14,17 +15,12 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class BrandFetcher {
+public class BrandFetcher implements Constants {
 
     @Value("${scrap.web.base.url}")
     private String BASE_URL;
 
     private static final Logger logger = LoggerFactory.getLogger(BrandFetcher.class);
-
-    //CONSTANTS
-    private static final String BRAND_LIST_BLOCK = "brand-listing-container-frontpage";
-    private static final String A = "a";
-    private static final String HREF = "href";
 
     public Set<Brand> getAllBrands(final ConnectionConfig connectionConfig) {
         logger.debug("getAllBrands: started for url={}", BASE_URL);

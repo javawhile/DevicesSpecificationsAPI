@@ -1,8 +1,10 @@
 package org.devices.specifications.api.service.impl;
 
 import org.devices.specifications.api.fetcher.BrandFetcher;
+import org.devices.specifications.api.fetcher.PropertyFetcher;
 import org.devices.specifications.api.fetcher.SpecificationsFetcher;
 import org.devices.specifications.api.fetcher.ModelFetcher;
+import org.devices.specifications.api.model.Property;
 import org.devices.specifications.api.service.CacheService;
 import org.devices.specifications.api.service.ConsumerService;
 import org.devices.specifications.api.model.Brand;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -26,6 +29,9 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     @Autowired
     private SpecificationsFetcher specificationsFetcher;
+
+    @Autowired
+    private PropertyFetcher propertyFetcher;
 
     @Autowired
     private CacheService cacheService;
@@ -104,6 +110,24 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
+    public Set<Property> getDetailSpecificationsByModel(Model model, boolean useCache) {
+        if (model == null || !isValidString(model.getModelUrl())) {
+            return null;
+        }
+        if (useCache) {
+            //SEARCH IN CACHE
+            Set<Property> properties = cacheService.getDetailSpecification(model.getModelUrl());
+            if (properties != null) {
+                return properties;
+            }
+            return getDetailSpecificationsByModel(model, false);
+        }
+        Set<Property> properties = propertyFetcher.fetchForUrl(model.getModelUrl());
+        cacheService.saveDetailSpecifications(model.getModelUrl(), properties);
+        return properties;
+    }
+
+    @Override
     public Specifications getSpecificationsByBrandModel(String brandName, String modelName, boolean useCache) {
         //GET BRAND===============================================================
         Brand brand = getBrandByName(brandName, useCache);
@@ -120,15 +144,41 @@ public class ConsumerServiceImpl implements ConsumerService {
             throw new RuntimeException(message);
         }
 
-        //GET SPECIFICATIONS STARTED==================================================
+        //GET SPECIFICATIONS==================================================
         Specifications specifications = getSpecificationsByModel(model, useCache);
         if (specifications == null) {
             String message = "error while getting specifications";
             throw new RuntimeException(message);
         }
-        //GET SPECIFICATIONS ENDED====================================================
 
         return specifications;
+    }
+
+    @Override
+    public Set<Property> getDetailSpecificationsByBrandModel(String brandName, String modelName, boolean useCache) {
+        //GET BRAND===============================================================
+        Brand brand = getBrandByName(brandName, useCache);
+        if (brand == null) {
+            String message = String.format("brand=%s not found", brandName);
+            throw new RuntimeException(message);
+        }
+
+        //GET MODEL=============================================================
+        Set<Model> allModelsByBrand = getAllModelsByBrandName(brandName, useCache);
+        Model model = utils.searchModel(allModelsByBrand, modelName);
+        if (model == null) {
+            String message = String.format("model=%s not found", modelName);
+            throw new RuntimeException(message);
+        }
+
+        //GET DETAILED SPECIFICATIONS==================================================
+        Set<Property> properties = getDetailSpecificationsByModel(model, useCache);
+        if (properties == null || properties.isEmpty()) {
+            String message = "error while getting detail specifications";
+            throw new RuntimeException(message);
+        }
+
+        return properties;
     }
 
     private boolean isValidString(String string) {

@@ -2,6 +2,7 @@ package org.devices.specifications.api.config;
 
 import org.devices.specifications.api.model.Brand;
 import org.devices.specifications.api.model.Model;
+import org.devices.specifications.api.model.Property;
 import org.devices.specifications.api.model.Specifications;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -31,4 +32,9 @@ public class CacheConfig {
         return new HashMap<>();
     }
 
+    @Bean
+    @Qualifier("detailSpecificationsCache")
+    public Map<String, Set<Property>> createDetailSpecificationsCache() {
+        return new HashMap<>();
+    }
 }
