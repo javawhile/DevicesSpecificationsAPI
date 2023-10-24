@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.devices.specifications.api</groupId>
-    <artifactId>DevicesSpecificationsAPI</artifactId>
+    <artifactId>devices-specifications-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -59,6 +59,12 @@
             <version>2.7.0</version>
         </dependency>
 
+        <!--JAVA SPRING EMAIL SUPPORT-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -69,6 +75,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub javawhile Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/javawhile/DevicesSpecificationsAPI</url>
+        </repository>
+    </distributionManagement>
 
 
 </project>
