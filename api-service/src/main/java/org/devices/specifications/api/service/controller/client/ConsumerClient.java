@@ -12,8 +12,8 @@ import java.util.Set;
 @RestController
 public interface ConsumerClient {
 
-    @GetMapping("/brands/all")
-    ResponseEntity<Set<String>> getAllBrands();
+    @GetMapping("/brands")
+    ResponseEntity<Set<String>> getBrands();
 
     @GetMapping("/models/{brandName}")
     ResponseEntity<Set<String>> getAllModelsByBrandName(@PathVariable("brandName") String brandName);
@@ -24,15 +24,4 @@ public interface ConsumerClient {
     @GetMapping("/specifications/{brandName}/{modelName}")
     ResponseEntity<Specifications> getSpecificationsByBrandModel(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
 
-    @GetMapping("/brands/all/nocache")
-    ResponseEntity<Set<String>> getAllBrandsNoCache();
-
-    @GetMapping("/models/{brandName}/nocache")
-    ResponseEntity<Set<String>> getAllModelsByBrandNameNoCache(@PathVariable("brandName") String brandName);
-
-    @GetMapping("/specifications/{brandName}/{modelName}/nocache")
-    ResponseEntity<Specifications> getSpecificationsByBrandModelNoCache(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
-
-    @GetMapping("/specifications/detail/{brandName}/{modelName}/nocache")
-    ResponseEntity<Set<Property>> getDetailSpecificationsByBrandModelNoCache(@PathVariable("brandName") String brandName, @PathVariable("modelName") String modelName);
 }

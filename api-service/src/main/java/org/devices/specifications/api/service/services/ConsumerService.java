@@ -5,19 +5,19 @@ import org.devices.specifications.api.common.model.Property;
 import org.devices.specifications.api.common.model.Specifications;
 import org.devices.specifications.api.common.model.Model;
 
+import java.util.List;
 import java.util.Set;
 
 public interface ConsumerService {
+    boolean isBrandSupported(final String brandName);
+    Set<String> getSupportedBrands();
+    Brand getBrandByName(String brandName);
 
-    Set<Brand> getAllBrands(boolean useCache);
-    Brand getBrandByName(String brandName, boolean useCache);
+    Set<Model> getAllModelsByBrandName(String brandName);
 
-    Set<Model> getAllModelsByBrand(Brand brand, boolean useCache);
-    Set<Model> getAllModelsByBrandName(String brandName, boolean useCache);
+    Specifications getSpecificationsByModel(Model model);
+    Set<Property> getDetailSpecificationsByModel(Model model);
 
-    Specifications getSpecificationsByModel(Model model, boolean useCache);
-    Set<Property> getDetailSpecificationsByModel(Model model, boolean useCache);
-
-    Specifications getSpecificationsByBrandModel(String brandName, String modelName, boolean useCache);
-    Set<Property> getDetailSpecificationsByBrandModel(String brandName, String modelName, boolean useCache);
+    Specifications getSpecificationsByBrandModel(String brandName, String modelName);
+    Set<Property> getDetailSpecificationsByBrandModel(String brandName, String modelName);
 }

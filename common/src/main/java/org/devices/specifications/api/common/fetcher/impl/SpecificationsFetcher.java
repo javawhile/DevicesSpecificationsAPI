@@ -1,5 +1,6 @@
-package org.devices.specifications.api.common.fetcher;
+package org.devices.specifications.api.common.fetcher.impl;
 
+import org.devices.specifications.api.common.fetcher.BaseFetcher;
 import org.devices.specifications.api.common.fetcher.constants.Constants;
 import org.devices.specifications.api.common.model.Specifications;
 import org.devices.specifications.api.common.model.ConnectionConfig;
@@ -15,28 +16,25 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class SpecificationsFetcher implements Constants {
+public class SpecificationsFetcher extends BaseFetcher<Specifications> implements Constants {
 
 	@Autowired
 	private Utils utils;
 
 	private static final Logger logger = LoggerFactory.getLogger(SpecificationsFetcher.class);
 
-	public Specifications fetchForUrl(String url, ConnectionConfig connectionConfig) {
+	@Override
+	public Specifications fetchForUrl(final String url, final ConnectionConfig connectionConfig) {
 		logger.debug("fetchForUrl: started for url={}", url);
 
 		DocumentFetcher documentFetcher = new DocumentFetcher();
 		Specifications specifications = new Specifications();
-		Document document = documentFetcher.getPageAsDocument(url, connectionConfig);
+		Document document = documentFetcher.fetchForUrl(url, connectionConfig);
 
 		if(document == null) {
 			String errorMessage = String.format("Unknown Error: fetched document cannot be null for url=%s", url);
 			logger.error(errorMessage);
 			throw new RuntimeException(errorMessage);
-		}
-
-		if(connectionConfig.getUrlWebpageHtmlConsumer() != null) {
-			connectionConfig.getUrlWebpageHtmlConsumer().accept(url, document.html());
 		}
 
         Element briefSpecificationsBlock = document.getElementById(BRIEF_SPECIFICATIONS_BLOCK);
@@ -91,10 +89,6 @@ public class SpecificationsFetcher implements Constants {
 		logger.debug("fetchForUrl: ended for url={}", url);
 
 		return specifications;
-	}
-
-	public Specifications fetchForUrl(final String url) {
-		return fetchForUrl(url, new ConnectionConfig());
 	}
 
 	private void populateToObject(String specificationLabel, String specificationValue, Specifications specifications) {

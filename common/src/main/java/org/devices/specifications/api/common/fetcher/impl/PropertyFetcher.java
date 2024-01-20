@@ -1,5 +1,6 @@
-package org.devices.specifications.api.common.fetcher;
+package org.devices.specifications.api.common.fetcher.impl;
 
+import org.devices.specifications.api.common.fetcher.BaseFetcher;
 import org.devices.specifications.api.common.fetcher.constants.Constants;
 import org.devices.specifications.api.common.model.ConnectionConfig;
 import org.devices.specifications.api.common.model.Property;
@@ -13,18 +14,15 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class PropertyFetcher implements Constants {
+public class PropertyFetcher extends BaseFetcher<Set<Property>> implements Constants {
 
     @Autowired
     private Utils utils;
 
-    public Set<Property> fetchForUrl(String url, ConnectionConfig connectionConfig) {
+    @Override
+    public Set<Property> fetchForUrl(final String url, final ConnectionConfig connectionConfig) {
         DocumentFetcher documentFetcher = new DocumentFetcher();
-        Document document = documentFetcher.getPageAsDocument(url, connectionConfig);
-
-        if(connectionConfig.getUrlWebpageHtmlConsumer() != null) {
-            connectionConfig.getUrlWebpageHtmlConsumer().accept(url, document.html());
-        }
+        Document document = documentFetcher.fetchForUrl(url, connectionConfig);
 
         Element targetDiv = getTargetDivElement(document);
 
@@ -74,10 +72,6 @@ public class PropertyFetcher implements Constants {
         }
 
         return allProperties;
-    }
-
-    public Set<Property> fetchForUrl(String url) {
-        return fetchForUrl(url, new ConnectionConfig());
     }
 
     private List<String> getPropertyValues(Element elementTableData) {

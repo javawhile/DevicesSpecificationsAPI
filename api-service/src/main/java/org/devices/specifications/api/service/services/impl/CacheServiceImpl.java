@@ -4,160 +4,54 @@ import org.devices.specifications.api.common.model.Brand;
 import org.devices.specifications.api.common.model.Model;
 import org.devices.specifications.api.common.model.Property;
 import org.devices.specifications.api.common.model.Specifications;
-import org.devices.specifications.api.common.utils.Utils;
 import org.devices.specifications.api.service.services.CacheService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class CacheServiceImpl implements CacheService {
 
-    @Autowired
-    private Utils utils;
+    private final Map<Brand, Set<Model>> modelsCacheMap = new HashMap<>();
 
-    @Autowired
-    @Qualifier("brandsCache")
-    private Map<String, Brand> brandsCache;
+    private final Map<Model, Specifications> specificationsCacheMap = new HashMap<>();
 
-    @Autowired
-    @Qualifier("modelsCache")
-    private Map<String, Set<Model>> modelsCache;
-
-    @Autowired
-    @Qualifier("specificationsCache")
-    private Map<String, Specifications> specificationsCache;
-
-    @Autowired
-    @Qualifier("detailSpecificationsCache")
-    private Map<String, Set<Property>> detailSpecificationsCache;
+    private final Map<Model, Set<Property>> detailSpecificationsCacheMap = new HashMap<>();
 
     @Override
-    public Integer resetAllCache() {
-        Integer size = brandsCache.size() + modelsCache.size() + specificationsCache.size();
-        brandsCache.clear();
-        modelsCache.clear();
-        specificationsCache.clear();
-        return size;
+    public Set<Model> getModels(final Brand brand) {
+        return modelsCacheMap.getOrDefault(brand, new HashSet<>());
     }
 
     @Override
-    public Integer resetBrandsCache() {
-        Integer size = brandsCache.size();
-        brandsCache.clear();
-        return size;
+    public void cacheModels(final Brand brand, final Set<Model> models) {
+        Set<Model> cachedModels = modelsCacheMap.getOrDefault(brand, new HashSet<>());
+        cachedModels.addAll(models);
+        modelsCacheMap.put(brand, cachedModels);
     }
 
     @Override
-    public Integer resetModelsCache() {
-        Integer size = modelsCache.size();
-        modelsCache.clear();
-        return size;
+    public Specifications getSpecifications(final Model model) {
+        return specificationsCacheMap.getOrDefault(model, null);
     }
 
     @Override
-    public Integer resetSpecificationsCache() {
-        Integer size = specificationsCache.size();
-        specificationsCache.clear();
-        return size;
+    public void cacheSpecifications(final Model model, final Specifications specifications) {
+        specificationsCacheMap.put(model, specifications);
     }
 
     @Override
-    public Integer resetDetailSpecificationsCache() {
-        Integer size = detailSpecificationsCache.size();
-        detailSpecificationsCache.clear();
-        return size;
+    public Set<Property> getDetailSpecifications(final Model model) {
+        return detailSpecificationsCacheMap.getOrDefault(model, new HashSet<>());
     }
 
     @Override
-    public void saveBrand(String brandName, Brand brand) {
-        if(isValidString(brandName) && brand != null) {
-            brandsCache.put(brandName, brand);
-        }
-    }
-
-    @Override
-    public void saveBrands(Set<Brand> brands) {
-        if(brands != null && !brands.isEmpty()) {
-            for(Brand brand: brands) {
-                if(brand != null) {
-                    saveBrand(brand.getBrandName(), brand);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void saveModels(String brandUrl, Set<Model> models) {
-        if(isValidString(brandUrl) && models != null && !models.isEmpty()) {
-            if(modelsCache.containsKey(brandUrl)) {
-                Set<Model> modelsFromCache = modelsCache.get(brandUrl);
-                if(modelsFromCache != null && !modelsFromCache.isEmpty()) {
-                    models.addAll(modelsFromCache);
-                }
-            }
-            modelsCache.put(brandUrl, models);
-        }
-    }
-
-    @Override
-    public void saveSpecifications(String modelUrl, Specifications specifications) {
-        if(isValidString(modelUrl) && specifications != null) {
-            specificationsCache.put(modelUrl, specifications);
-        }
-    }
-
-    @Override
-    public void saveDetailSpecifications(String modelUrl, Set<Property> properties) {
-        if(isValidString(modelUrl) && properties != null) {
-            detailSpecificationsCache.put(modelUrl, properties);
-        }
-    }
-
-    @Override
-    public Brand getBrand(String brandName) {
-        if(isValidString(brandName) && brandsCache.containsKey(brandName)) {
-            return utils.searchBrand(getAllBrands(), brandName);
-        }
-        return null;
-    }
-
-    @Override
-    public Set<Brand> getAllBrands() {
-        Set<Brand> brands = new HashSet<>();
-        for (Map.Entry<String, Brand> stringBrandEntry : brandsCache.entrySet()) {
-            brands.add(stringBrandEntry.getValue());
-        }
-        return brands;
-    }
-
-    @Override
-    public Set<Model> getModels(String brandUrl) {
-        if(isValidString(brandUrl) && modelsCache.containsKey(brandUrl)) {
-            return modelsCache.get(brandUrl);
-        }
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Specifications getSpecification(String modelUrl) {
-        if(isValidString(modelUrl)) {
-            return specificationsCache.get(modelUrl);
-        }
-        return null;
-    }
-
-    @Override
-    public Set<Property> getDetailSpecification(String modelUrl) {
-        if(isValidString(modelUrl)) {
-            return detailSpecificationsCache.get(modelUrl);
-        }
-        return null;
-    }
-
-    private boolean isValidString(String string) {
-        return  string != null && !string.trim().isEmpty();
+    public void cacheDetailSpecifications(final Model model, final Set<Property> properties) {
+        Set<Property> cachedProperties = detailSpecificationsCacheMap.getOrDefault(model, new HashSet<>());
+        cachedProperties.addAll(properties);
+        detailSpecificationsCacheMap.put(model, cachedProperties);
     }
 }

@@ -1,8 +1,9 @@
-package org.devices.specifications.api.common.fetcher;
+package org.devices.specifications.api.common.fetcher.impl;
 
+import org.devices.specifications.api.common.fetcher.BaseFetcher;
 import org.devices.specifications.api.common.fetcher.constants.Constants;
+import org.devices.specifications.api.common.model.Brand;
 import org.devices.specifications.api.common.model.ConnectionConfig;
-import org.devices.specifications.api.common.model.Model;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,15 +15,16 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class ModelFetcher implements Constants {
+public class BrandFetcher extends BaseFetcher<Set<Brand>> implements Constants {
 
-    private static final Logger logger = LoggerFactory.getLogger(ModelFetcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(BrandFetcher.class);
 
-    public Set<Model> getAllModels(final String url, final ConnectionConfig connectionConfig) {
-        logger.debug("getAllModels: started for url={}", url);
+    @Override
+    public Set<Brand> fetchForUrl(final String url, final ConnectionConfig connectionConfig) {
+        logger.debug("getAllBrands: started for url={}", url);
 
         DocumentFetcher documentFetcher = new DocumentFetcher();
-        Document document = documentFetcher.getPageAsDocument(url, connectionConfig);
+        Document document = documentFetcher.fetchForUrl(url, connectionConfig);
 
         if (document == null) {
             String errorMessage = String.format("Unknown Error: fetched document cannot be null for url=%s", url);
@@ -30,23 +32,19 @@ public class ModelFetcher implements Constants {
             throw new RuntimeException(errorMessage);
         }
 
-        if(connectionConfig.getUrlWebpageHtmlConsumer() != null) {
-            connectionConfig.getUrlWebpageHtmlConsumer().accept(url, document.html());
-        }
+        Elements allBrandListElements = document.getElementsByClass(BRAND_LIST_BLOCK);
 
-        Elements allModelListElements = document.getElementsByClass(MODEL_LIST_BLOCK);
-
-        if (allModelListElements.isEmpty()) {
-            String errorMessage = String.format("Unknown Error: allModelListElements cannot be empty for url=%s", url);
+        if (allBrandListElements.isEmpty()) {
+            String errorMessage = String.format("Unknown Error: allBrandListElements cannot be empty for url=%s", url);
             logger.error(errorMessage);
             return Collections.emptySet();
         }
 
-        final Set<Model> models = new HashSet<>();
+        final Set<Brand> brands = new HashSet<>();
 
-        for (Element modelElement : allModelListElements) {
+        for (Element brandElement : allBrandListElements) {
             //GET ALL LINK TAGS
-            Elements linkTags = modelElement.getElementsByTag(A);
+            Elements linkTags = brandElement.getElementsByTag(A);
 
             if (linkTags.isEmpty()) {
                 continue;
@@ -68,21 +66,15 @@ public class ModelFetcher implements Constants {
                     continue;
                 }
 
-                Model model = new Model();
-                model.setModelName(contentInTag);
-                model.setModelUrl(hrefUrl);
-
-                models.add(model);
+                Brand brand = new Brand();
+                brand.setBrandName(contentInTag.trim());
+                brand.setBrandUrl(hrefUrl.trim());
+                brands.add(brand);
             }
         }
 
-        logger.debug("getAllModels: ended for url={}", url);
+        logger.debug("getAllBrands: ended for url={}", url);
 
-        return models;
+        return brands;
     }
-
-    public Set<Model> getAllModels(final String url) {
-        return getAllModels(url, new ConnectionConfig());
-    }
-
 }

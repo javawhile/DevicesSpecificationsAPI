@@ -1,27 +1,19 @@
 package org.devices.specifications.api.service.services;
 
 import org.devices.specifications.api.common.model.Brand;
+import org.devices.specifications.api.common.model.Model;
 import org.devices.specifications.api.common.model.Property;
 import org.devices.specifications.api.common.model.Specifications;
-import org.devices.specifications.api.common.model.Model;
 
 import java.util.Set;
 
 public interface CacheService {
+    Set<Model> getModels(final Brand brand);
+    void cacheModels(final Brand brand, final Set<Model> models);
 
-    Integer resetAllCache();
-    Integer resetBrandsCache();
-    Integer resetModelsCache();
-    Integer resetSpecificationsCache();
-    Integer resetDetailSpecificationsCache();
-    void saveBrand(String brandName, Brand brand);
-    void saveBrands(Set<Brand> brands);
-    void saveModels(String brandUrl, Set<Model> models);
-    void saveSpecifications(String modelUrl, Specifications specifications);
-    void saveDetailSpecifications(String modelUrl, Set<Property> properties);
-    Brand getBrand(String brandName);
-    Set<Brand> getAllBrands();
-    Set<Model> getModels(String brandUrl);
-    Specifications getSpecification(String modelUrl);
-    Set<Property> getDetailSpecification(String modelUrl);
+    Specifications getSpecifications(final Model model);
+    void cacheSpecifications(final Model model, final Specifications specifications);
+
+    Set<Property> getDetailSpecifications(final Model model);
+    void cacheDetailSpecifications(final Model model, final Set<Property> properties);
 }
