@@ -4,6 +4,6 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:11-jdk-slim
-COPY --from=build /api-service/target/*.jar app.jar
+COPY --from=build /api-service/target/*.war app.war
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","app.war"]
